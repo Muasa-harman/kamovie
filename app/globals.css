@@ -70,6 +70,12 @@
   --white: #fdfdfd;
   --white-foreground: #111111;
 
+  --black-90: rgba(0, 0, 0, 0.9);
+
+  .bg-black-90 {
+  background-color: var(--black-90);
+}
+
   --secondary: oklch(0.93 0.05 250);
   --secondary-foreground: oklch(0.145 0 0);
 

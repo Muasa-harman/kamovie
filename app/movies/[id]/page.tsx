@@ -148,6 +148,7 @@ import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getMovieDetails } from "@/lib/movieApi";
 import MovieCardDisplay from "@/components/card/MovieCardDisplay";
+import { Button } from "@/components/ui/button";
 
 interface MovieDetailsType {
   id: number;
@@ -198,14 +199,14 @@ export default function MovieDetailsPage() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto p-6 md:p-10 text-white">
+    <div className="max-w-6xl mx-auto p-6 md:p-10 bg-black-90 text-white">
       {/* Back Button */}
-      <button
+      <Button
         onClick={() => router.back()}
-        className="mb-6 px-4 py-2 rounded-full bg-gray-800 hover:bg-gray-700 transition"
+        className="mb-6 px-4 py-2 rounded-full bg-primary hover:bg-primary-hover transition"
       >
-        ← Back
-      </button>
+         Back
+      </Button>
 
       <div className="flex flex-col md:flex-row gap-6">
         {/* Poster */}
@@ -281,7 +282,7 @@ export default function MovieDetailsPage() {
 
       {/* Trailer Modal */}
       {isTrailerOpen && trailer && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-primary/80">
           <div className="relative w-full max-w-4xl aspect-video">
             <iframe
               width="100%"
