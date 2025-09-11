@@ -5,7 +5,6 @@ import { useParams, useRouter } from "next/navigation";
 import { getMovieDetails } from "@/lib/movieApi";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
-// import Spinner from "@/components/common/Spinner"; // ✅ import Spinner
 
 interface MovieDetailsType {
   id: number;
@@ -16,11 +15,22 @@ interface MovieDetailsType {
   release_date: string;
   genres: { id: number; name: string }[];
   credits?: {
-    cast: { id: number; name: string; character: string; profile_path: string }[];
+    cast: {
+      id: number;
+      name: string;
+      character: string;
+      profile_path: string;
+    }[];
     crew: { id: number; name: string; job: string }[];
   };
   videos?: {
-    results: { id: string; type: string; site: string; key: string; name: string }[];
+    results: {
+      id: string;
+      type: string;
+      site: string;
+      key: string;
+      name: string;
+    }[];
   };
 }
 
@@ -55,7 +65,8 @@ export default function MovieDetailsPage() {
     return <div className="text-white text-center mt-10">Movie not found</div>;
   }
 
-  const directors = movie.credits?.crew.filter((c) => c.job === "Director") || [];
+  const directors =
+    movie.credits?.crew.filter((c) => c.job === "Director") || [];
   const writers =
     movie.credits?.crew.filter((c) =>
       ["Writer", "Screenplay", "Story"].includes(c.job)
@@ -67,7 +78,6 @@ export default function MovieDetailsPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-10 bg-black/90 text-white">
-      {/* Back Button */}
       <Button
         onClick={() => router.back()}
         className="mb-6 px-4 py-2 rounded-full bg-primary hover:bg-primary-hover transition"
@@ -93,12 +103,14 @@ export default function MovieDetailsPage() {
             <strong>Rating:</strong> {movie.vote_average}/10
           </p>
           <p className="text-gray-300 mb-2">
-            <strong>Genres:</strong> {movie.genres.map((g) => g.name).join(", ")}
+            <strong>Genres:</strong>{" "}
+            {movie.genres.map((g) => g.name).join(", ")}
           </p>
 
           {directors.length > 0 && (
             <p className="text-gray-300 mb-1">
-              <strong>Director:</strong> {directors.map((d) => d.name).join(", ")}
+              <strong>Director:</strong>{" "}
+              {directors.map((d) => d.name).join(", ")}
             </p>
           )}
           {writers.length > 0 && (
@@ -111,12 +123,12 @@ export default function MovieDetailsPage() {
 
           {/* Trailer Button */}
           {trailer && (
-            <button
+            <Button
               onClick={() => setIsTrailerOpen(true)}
-              className="inline-block mb-6 px-6 py-3 bg-red-600 hover:bg-red-500 rounded-full font-semibold transition"
+              className="mb-6 rounded-full bg-primary/100 hover:bg-primary/90 font-semibold px-6 py-3 cursor-pointer"
             >
               ▶ Watch Trailer
-            </button>
+            </Button>
           )}
 
           {/* Top Cast */}
@@ -172,8 +184,6 @@ export default function MovieDetailsPage() {
     </div>
   );
 }
-
-
 
 // "use client";
 
@@ -338,4 +348,3 @@ export default function MovieDetailsPage() {
 //     </div>
 //   );
 // }
-

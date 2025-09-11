@@ -5,10 +5,6 @@ import {
   Search,
   Filter,
   ChevronDown,
-  Star,
-  Calendar,
-  Clock,
-  Grid3X3,
 } from "lucide-react";
 import {
   getTrendingMovies,
@@ -19,21 +15,57 @@ import {
   getGenres,
   getKeywords,
 } from "@/lib/movieApi";
+import HeroHeadline from "./Hero.ts        <div className=\"text-xl font-bold text-green-600\">Kamovie</HeroHeadline";
+
+// Types
+interface Movie {
+  id: number;
+  title: string;
+  release_date?: string;
+  genre_ids: number[];
+  vote_average?: number;
+  poster_path?: string;
+}
+
+interface Genre {
+  id: number;
+  name: string;
+}
+
+interface Keyword {
+  id: number;
+  name: string;
+}
+
+interface Filters {
+  genre: string;
+  year: string;
+  rating: string;
+  duration: string;
+  sortBy: string;
+}
+
+interface Stats {
+  trending: number;
+  popular: number;
+  topRated: number;
+  upcoming: number;
+}
 
 export default function Hero() {
-  const [movies, setMovies] = useState<any[]>([]);
-  const [genres, setGenres] = useState<{ id: number; name: string }[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState({
+  const [movies, setMovies] = useState<Movie[]>([]);
+  const [genres, setGenres] = useState<Genre[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [searchQuery, setSearchQuery] = useState<string>("");
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [filters, setFilters] = useState<Filters>({
     genre: "",
     year: "",
     rating: "",
     duration: "",
     sortBy: "popularity.desc",
   });
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<Stats>({
     trending: 0,
     popular: 0,
     topRated: 0,
@@ -41,13 +73,12 @@ export default function Hero() {
   });
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const [trendingGenres, setTrendingGenres] = useState<string[]>([]);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestions, setSuggestions] = useState<Keyword[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
 
   const filtersRef = useRef<HTMLDivElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
 
-  // Close filters/suggestions on outside click
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -67,17 +98,16 @@ export default function Hero() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Load initial data
   useEffect(() => {
     async function loadData() {
       try {
         const [trending, popular, topRated, upcoming, genreList] =
           await Promise.all([
-            getTrendingMovies(),
-            getPopularMovies(),
-            getTopRatedMovies(),
-            getUpcomingMovies(),
-            getGenres(),
+            getTrendingMovies() as Promise<Movie[]>,
+            getPopularMovies() as Promise<Movie[]>,
+            getTopRatedMovies() as Promise<Movie[]>,
+            getUpcomingMovies() as Promise<Movie[]>,
+            getGenres() as Promise<Genre[]>,
           ]);
 
         setMovies(trending.slice(0, 12));
@@ -90,27 +120,25 @@ export default function Hero() {
           upcoming: upcoming.length,
         });
 
-        // Years dynamically from trending
         const years = Array.from(
-          new Set(
+          new Set<number>(
             trending
-              .map((m: any) => m.release_date?.split("-")[0])
+              .map((m) => m.release_date?.split("-")[0])
               .filter(Boolean)
               .map(Number)
           )
         ).sort((a, b) => b - a);
         setAvailableYears(years);
 
-        // Trending genres
         const genreCounts: Record<string, number> = {};
-        trending.forEach((m: any) => {
-          m.genre_ids.forEach((gid: number) => {
+        trending.forEach((m) => {
+          m.genre_ids.forEach((gid) => {
             const g = genreList.find((gn) => gn.id === gid);
             if (g) genreCounts[g.name] = (genreCounts[g.name] || 0) + 1;
           });
         });
         const topGenres = Object.entries(genreCounts)
-          .sort((a, b) => b[1] - a[1])
+          .sort(([, countA], [, countB]) => countB - countA)
           .slice(0, 5)
           .map(([g]) => g);
         setTrendingGenres(topGenres);
@@ -123,11 +151,10 @@ export default function Hero() {
     loadData();
   }, []);
 
-  // Autocomplete keyword suggestions
   useEffect(() => {
     if (searchQuery.trim().length > 1) {
       getKeywords(searchQuery)
-        .then((data) => {
+        .then((data: Keyword[]) => {
           setSuggestions(data.slice(0, 6));
           setShowSuggestions(true);
         })
@@ -141,14 +168,13 @@ export default function Hero() {
   const handleSearch = () => {
     setLoading(true);
     discoverMovies({ ...filters, query: searchQuery })
-      .then((data) => {
+      .then((data: Movie[]) => {
         setMovies(data.slice(0, 12));
 
-        // Update years
         const years = Array.from(
-          new Set(
+          new Set<number>(
             data
-              .map((m: any) => m.release_date?.split("-")[0])
+              .map((m) => m.release_date?.split("-")[0])
               .filter(Boolean)
               .map(Number)
           )
@@ -160,7 +186,7 @@ export default function Hero() {
     setShowSuggestions(false);
   };
 
-  const handleFilterChange = (key: string, value: string) => {
+  const handleFilterChange = (key: keyof Filters, value: string) => {
     setFilters((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -182,16 +208,10 @@ export default function Hero() {
       }}
     >
       <div className="max-w-6xl mx-auto w-full">
-        {/* Headline */}
-        <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6 text-center">
-          Discover Your Next <span className="text-primary">Favorite</span> Movie
-        </h1>
-
-        {/* Description */}
+        <HeroHeadline/>
         <p className="text-gray-300 text-lg md:text-xl mb-10 leading-relaxed text-center max-w-3xl mx-auto">
-          Get personalized movie recommendations based on your preferences. From
-          classic cinema to the latest blockbusters, we’ll help you find the
-          perfect movie for any mood.
+          Discover hidden gems you didn’t know you’d love.,
+           Your ultimate guide to movies, tailored for you.
         </p>
 
         {/* Search Box */}
@@ -215,7 +235,6 @@ export default function Hero() {
             </button>
           </div>
 
-          {/* Suggestions Dropdown */}
           {showSuggestions && suggestions.length > 0 && (
             <div
               ref={suggestionsRef}
@@ -236,7 +255,6 @@ export default function Hero() {
             </div>
           )}
 
-          {/* Filter Toggle */}
           <div className="border-t border-white/20 mt-2 pt-2 px-4">
             <button
               className="flex items-center text-gray-300 hover:text-white transition-colors text-sm"
@@ -253,19 +271,19 @@ export default function Hero() {
             </button>
           </div>
 
-          {/* Filters */}
           {showFilters && (
             <div
               ref={filtersRef}
               className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-4 p-4 bg-black/30 rounded-lg border border-white/10"
             >
-              {/* Genre */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
                   Genre
                 </label>
                 <select
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm"
+                  className="w-full bg-primary/50 border border-primary-foreground/20 rounded-lg px-3 py-2 text-primary-foreground text-sm hover:bg-primary/70 hover:border-primary-foreground/40 transition-colors duration-300"
+
+                  // className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm"
                   value={filters.genre}
                   onChange={(e) => handleFilterChange("genre", e.target.value)}
                 >
@@ -277,14 +295,13 @@ export default function Hero() {
                   ))}
                 </select>
               </div>
-
-              {/* Year */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
                   Year
                 </label>
                 <select
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm"
+                  className="w-full bg-primary/50 border border-white/20 rounded-lg px-3 py-2 text-white text-sm hover:bg-primary/70 hover:border-white/40 transition-colors duration-300"
+                  // className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm"
                   value={filters.year}
                   onChange={(e) => handleFilterChange("year", e.target.value)}
                 >
@@ -296,14 +313,13 @@ export default function Hero() {
                   ))}
                 </select>
               </div>
-
-              {/* Rating */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
                   Min Rating
                 </label>
                 <select
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm"
+                  className="w-full bg-primary/50 border border-white/20 rounded-lg px-3 py-2 text-white text-sm hover:bg-primary/70 hover:border-white/40 transition-colors duration-300"
+                  // className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm"
                   value={filters.rating}
                   onChange={(e) => handleFilterChange("rating", e.target.value)}
                 >
@@ -315,14 +331,13 @@ export default function Hero() {
                   ))}
                 </select>
               </div>
-
-              {/* Duration */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
                   Duration
                 </label>
                 <select
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm"
+                className="w-full bg-primary/50 border border-white/20 rounded-lg px-3 py-2 text-white text-sm hover:bg-primary/70 hover:border-white/40 transition-colors duration-300"
+                  // className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm"
                   value={filters.duration}
                   onChange={(e) => handleFilterChange("duration", e.target.value)}
                 >
@@ -332,14 +347,13 @@ export default function Hero() {
                   <option value="long">Long (&gt; 120min)</option>
                 </select>
               </div>
-
-              {/* Sort */}
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
                   Sort By
                 </label>
                 <select
-                  className="w-full bg-white/10 border border-white/20 rounded-lg px-3 py-2 text-white text-sm"
+                  className="w-full bg-primary/50 border border-white/20 rounded-lg px-3 py-2 text-white text-sm hover:bg-primary/70 hover:border-white/40 transition-colors duration-300"
+                  // className="w-full bg-primary/50 border border-white/20 rounded-lg px-3 py-2 text-white text-sm"
                   value={filters.sortBy}
                   onChange={(e) => handleFilterChange("sortBy", e.target.value)}
                 >
@@ -369,7 +383,7 @@ export default function Hero() {
           {trendingGenres.map((chip) => (
             <button
               key={chip}
-              className="bg-white/10 hover:bg-white/20 border border-white/20 rounded-full px-4 py-1 text-sm text-gray-300 hover:text-white transition-colors"
+              className="bg-primary-foreground/10 hover:bg-primary/60 border border-white/20 rounded-full px-4 py-1 text-sm text-gray-300 hover:text-white transition-colors"
               onClick={() => {
                 setSearchQuery(chip);
                 handleSearch();
@@ -379,57 +393,9 @@ export default function Hero() {
             </button>
           ))}
         </div>
-
-        {/* Stats Section */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-gray-300 mb-12">
-          <div>
-            <p className="text-3xl font-bold">{stats.trending}</p>
-            <p className="text-sm">Trending</p>
-          </div>
-          <div>
-            <p className="text-3xl font-bold">{stats.popular}</p>
-            <p className="text-sm">Popular</p>
-          </div>
-          <div>
-            <p className="text-3xl font-bold">{stats.topRated}</p>
-            <p className="text-sm">Top Rated</p>
-          </div>
-          <div>
-            <p className="text-3xl font-bold">{stats.upcoming}</p>
-            <p className="text-sm">Upcoming</p>
-          </div>
-        </div>
-
-        {/* Movies Grid
-        {!loading && (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-            {movies.map((movie) => (
-              <div
-                key={movie.id}
-                className="bg-white/5 rounded-xl overflow-hidden shadow-lg hover:scale-105 transition-transform"
-              >
-                <img
-                  src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-                  alt={movie.title}
-                  className="w-full h-72 object-cover"
-                />
-                <div className="p-3">
-                  <h3 className="text-white font-semibold text-lg truncate">
-                    {movie.title}
-                  </h3>
-                  <p className="text-gray-400 text-sm">
-                    {movie.release_date?.split("-")[0]} • ⭐{" "}
-                    {movie.vote_average?.toFixed(1)}
-                  </p>
-                </div>
-              </div>
-            ))} */}
-          {/* </div> */}
-        {/* )} */}
       </div>
     </section>
   );
 }
-
 
 
