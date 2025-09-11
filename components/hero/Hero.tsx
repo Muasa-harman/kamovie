@@ -15,7 +15,7 @@ import {
   getGenres,
   getKeywords,
 } from "@/lib/movieApi";
-import HeroHeadline from "./Hero.ts        <div className=\"text-xl font-bold text-green-600\">Kamovie</HeroHeadline";
+import HeroHeadline from "./Hero.ts/HeroHeadline";
 
 // Types
 interface Movie {
