@@ -1,7 +1,7 @@
 import MovieCard from '@/components/card/MovieCard';
 import { render, screen } from '@testing-library/react';
-// import MovieCard from './MovieCard';
 import { useRouter } from 'next/navigation';
+import '@testing-library/jest-dom';
 
 jest.mock('next/navigation', () => ({
   useRouter: jest.fn(),
@@ -9,6 +9,7 @@ jest.mock('next/navigation', () => ({
 
 describe('MovieCard', () => {
   const pushMock = jest.fn();
+
   beforeEach(() => {
     (useRouter as jest.Mock).mockReturnValue({ push: pushMock });
   });

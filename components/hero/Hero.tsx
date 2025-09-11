@@ -277,7 +277,7 @@ export default function Hero() {
               className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-4 p-4 bg-black/30 rounded-lg border border-white/10"
             >
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-1">
+                <label  className="block text-sm font-medium text-gray-300 mb-1">
                   Genre
                 </label>
                 <select
