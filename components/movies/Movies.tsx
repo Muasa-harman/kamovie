@@ -2,7 +2,6 @@
 
 import React, { useEffect, useState } from "react";
 import MovieCard from "../card/MovieCard";
-// import MovieCardDisplay from "../card/MovieCardDisplay";
 import {
   getTrendingMovies,
   getPopularMovies,
