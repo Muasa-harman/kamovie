@@ -1,4 +1,5 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { fireEvent } from "@testing-library/react";
+import { render, screen } from "../test/utils";
 import * as movieApi from "@/lib/movieApi";
 import { useRouter, useParams } from "next/navigation";
 import MovieDetailsPage from "@/app/movies/[id]/page";
