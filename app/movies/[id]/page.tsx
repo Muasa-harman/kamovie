@@ -5,6 +5,8 @@ import { useParams, useRouter } from "next/navigation";
 import { getMovieDetails } from "@/lib/movieApi";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
+import { useWatchlist } from "@/hooks/useWatchlist";
+import Toast from "@/components/Toast";
 
 interface MovieDetailsType {
   id: number;
@@ -43,6 +45,16 @@ export default function MovieDetailsPage() {
   const [loading, setLoading] = useState(true);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
+  const {
+    isInWatchlist,
+    toggleWatchlist,
+    toastMessage,
+    showToast,
+    toastType,
+    handleUndo,
+  } = useWatchlist(movie || undefined);
+
+  // Fetch movie details
   useEffect(() => {
     if (!id) return;
     setLoading(true);
@@ -62,7 +74,9 @@ export default function MovieDetailsPage() {
   }
 
   if (!movie) {
-    return <div className="text-white text-center mt-10">Movie not found</div>;
+    return (
+      <div className="text-white text-center mt-10">Movie not found</div>
+    );
   }
 
   const directors =
@@ -78,6 +92,7 @@ export default function MovieDetailsPage() {
 
   return (
     <div className="max-w-6xl mx-auto p-6 md:p-10 bg-black/90 text-white">
+      {/* Back Button */}
       <Button
         onClick={() => router.back()}
         className="mb-6 px-4 py-2 rounded-full bg-primary hover:bg-primary-hover transition"
@@ -95,7 +110,10 @@ export default function MovieDetailsPage() {
 
         {/* Movie Info */}
         <div className="flex-1">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4">{movie.title}</h1>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4">
+            {movie.title}
+          </h1>
+
           <p className="text-gray-300 mb-2">
             <strong>Release Date:</strong> {movie.release_date}
           </p>
@@ -115,21 +133,34 @@ export default function MovieDetailsPage() {
           )}
           {writers.length > 0 && (
             <p className="text-gray-300 mb-4">
-              <strong>Writer:</strong> {writers.map((w) => w.name).join(", ")}
+              <strong>Writer:</strong>{" "}
+              {writers.map((w) => w.name).join(", ")}
             </p>
           )}
 
           <p className="text-gray-200 mb-6">{movie.overview}</p>
 
-          {/* Trailer Button */}
-          {trailer && (
+          {/* Actions */}
+          <div className="flex flex-col md:flex-row gap-4 mb-6 justify-between">
+            {trailer && (
+              <Button
+                onClick={() => setIsTrailerOpen(true)}
+                className="mb-6 rounded-full bg-primary/100 hover:bg-primary/90 font-semibold px-6 py-3 cursor-pointer"
+              >
+                ▶ Watch Trailer
+              </Button>
+            )}
             <Button
-              onClick={() => setIsTrailerOpen(true)}
-              className="mb-6 rounded-full bg-primary/100 hover:bg-primary/90 font-semibold px-6 py-3 cursor-pointer"
+              onClick={toggleWatchlist}
+              className={`rounded-full px-6 py-3 font-semibold ${
+                isInWatchlist
+                  ? "bg-primary/100 hover:bg-primary/90"
+                  : "bg-green-600 hover:bg-green-700"
+              }`}
             >
-              ▶ Watch Trailer
+              {isInWatchlist ? "✔ In Watchlist" : "+ Add to Watchlist"}
             </Button>
-          )}
+          </div>
 
           {/* Top Cast */}
           {movie.credits && movie.credits.cast.length > 0 && (
@@ -174,13 +205,22 @@ export default function MovieDetailsPage() {
             />
             <button
               onClick={() => setIsTrailerOpen(false)}
-              className="absolute top-2 right-2 text-white text-2xl font-bold hover:text-red-500 cursor-pointer"
+              className="absolute top-2 right-2 text-white text-2xl font-bold hover:text-primary/50 cursor-pointer"
             >
               ✕
             </button>
           </div>
         </div>
       )}
+      {showToast && (
+        <Toast
+          message={toastMessage}
+          show={showToast}
+          type={toastType}
+          onUndo={toastType === "remove" ? handleUndo : undefined}
+        />
+      )}
     </div>
   );
 }
+
