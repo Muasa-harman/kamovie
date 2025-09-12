@@ -174,7 +174,7 @@ export default function MovieDetailsPage() {
             />
             <button
               onClick={() => setIsTrailerOpen(false)}
-              className="absolute top-2 right-2 text-white text-2xl font-bold hover:text-red-500"
+              className="absolute top-2 right-2 text-white text-2xl font-bold hover:text-red-500 cursor-pointer"
             >
               ✕
             </button>
