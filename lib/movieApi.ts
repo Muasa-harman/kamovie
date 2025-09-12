@@ -1,7 +1,7 @@
 const BASE_URL = "https://api.themoviedb.org/3";
 const TOKEN = process.env.NEXT_PUBLIC_TMDB_READ_TOKEN!;
 
-async function fetchFromTMDB(endpoint: string) {
+async function fetchDataFromTMDB(endpoint: string) {
   const res = await fetch(`${BASE_URL}${endpoint}`, {
     headers: {
       Authorization: `Bearer ${TOKEN}`,
@@ -16,29 +16,30 @@ async function fetchFromTMDB(endpoint: string) {
 
   return res.json();
 }
+console.log("api endpoint", fetchDataFromTMDB)
 
 export async function getTrendingMovies() {
-  const data = await fetchFromTMDB("/trending/movie/week");
+  const data = await fetchDataFromTMDB("/trending/movie/week");
   return data.results;
 }
 
 export async function getPopularMovies() {
-  const data = await fetchFromTMDB("/movie/popular");
+  const data = await fetchDataFromTMDB("/movie/popular");
   return data.results;
 }
 
 export async function getTopRatedMovies() {
-  const data = await fetchFromTMDB("/movie/top_rated");
+  const data = await fetchDataFromTMDB("/movie/top_rated");
   return data.results;
 }
 
 export async function getUpcomingMovies() {
-  const data = await fetchFromTMDB("/movie/upcoming");
+  const data = await fetchDataFromTMDB("/movie/upcoming");
   return data.results;
 }
 
 export async function searchMovies(query: string) {
-  const data = await fetchFromTMDB(
+  const data = await fetchDataFromTMDB(
     `/search/movie?query=${encodeURIComponent(query)}&include_adult=false`
   );
   return data.results;
@@ -75,22 +76,22 @@ export async function discoverMovies(filters: {
   params.set("language", "en-US");
   params.set("page", "1");
 
-  const data = await fetchFromTMDB(`/discover/movie?${params.toString()}`);
+  const data = await fetchDataFromTMDB(`/discover/movie?${params.toString()}`);
   return data.results;
 }
 
 export async function getMovieDetails(id: number) {
-  return fetchFromTMDB(`/movie/${id}?append_to_response=credits,videos`);
+  return fetchDataFromTMDB(`/movie/${id}?append_to_response=credits,videos`);
 }
 
 
 export async function getGenres() {
-  const data = await fetchFromTMDB("/genre/movie/list?language=en-US");
+  const data = await fetchDataFromTMDB("/genre/movie/list?language=en-US");
   return data.genres; // returns [{ id, name }]
 }
 
 export async function getKeywords(query: string) {
-  const data = await fetchFromTMDB(
+  const data = await fetchDataFromTMDB(
     `/search/keyword?query=${encodeURIComponent(query)}`
   );
   return data.results; 
