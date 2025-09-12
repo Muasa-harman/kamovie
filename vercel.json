@@ -11,10 +11,5 @@
       "source": "/(.*)",
       "destination": "/index.html"
     }
-  ],
-  "env": {
-    "NEXT_PUBLIC_TMDB_READ_TOKEN": "@next_public_tmdb_read_token",
-    "NEXTAUTH_SECRET": "@nextauth_secret",
-    "NEXTAUTH_URL": "https://your-app.vercel.app"
-  }
+  ]
 }
