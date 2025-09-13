@@ -95,34 +95,6 @@ export default function MoviesPage() {
       </Button>
       <h1 className="text-3xl font-bold mb-6">{title}</h1>
 
-      {/* <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-        {movies.map((movie) => (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
-            {movies.map((movie) => (
-              <MovieCard
-                key={movie.id}
-                id={movie.id}
-                title={movie.title}
-                rating={movie.vote_average}
-                poster={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
-              />
-            ))}
-          </div>
-          // <div key={movie.id} className="bg-gray-900 rounded-lg overflow-hidden">
-          //     <img
-          //         src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
-          //         alt={movie.title}
-          //         className="w-full h-[400px] object-cover"
-          //     />
-          //     <div className="p-4">
-          //         <h2 className="text-lg font-semibold">{movie.title}</h2>
-          //         <p className="text-sm text-gray-400">
-          //             ⭐ {movie.vote_average} | {movie.release_date}
-          //         </p>
-          //     </div>
-          // </div>
-        ))}
-      </div> */}
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6">
   {movies.map((movie) => (
     <MovieCard
