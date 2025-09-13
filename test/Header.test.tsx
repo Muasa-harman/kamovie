@@ -1,15 +1,21 @@
-import Header from '@/components/header/Header';
-import { render, screen } from '@testing-library/react';
+import Header from "@/components/header/Header";
+import { render, screen } from "@testing-library/react";
 
-describe('Header', () => {
-  it('renders the header text', () => {
+describe("Header", () => {
+  it("renders the header text", () => {
     render(<Header />);
     expect(screen.getByText(/Welcome to Kamove/i)).toBeInTheDocument();
   });
 
-  it('contains a link', () => {
+  it("contains a Call link", () => {
     render(<Header />);
-    const link = screen.getByRole('link', { name: /Call or whatsapp/i });
-    expect(link).toHaveAttribute('href', 'tel:+254721456992');
+    const callLink = screen.getByRole("link", { name: /Call/i });
+    expect(callLink).toHaveAttribute("href", "tel:+254721456992");
+  });
+
+  it("contains a WhatsApp link", () => {
+    render(<Header />);
+    const whatsappLink = screen.getByRole("link", { name: /WhatsApp/i });
+    expect(whatsappLink).toHaveAttribute("href", "https://wa.me/254721456992");
   });
 });

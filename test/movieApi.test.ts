@@ -40,9 +40,12 @@ describe("movieApi", () => {
       }),
     });
 
-    const data = await discoverMovies({ query: "space", genre: "1", year: "2023" });
+    const data = await discoverMovies({ query: "space", genre: "1", year: "2023",page:1 });
 
-    expect(data).toEqual([{ id: 2, title: "Interstellar" }]);
+    expect(data).toEqual({
+      results: [{ id: 2, title: "Interstellar" }],
+      totalPages: undefined,
+    });
     expect(fetch).toHaveBeenCalledWith(
       expect.stringContaining("/discover/movie?"),
       expect.objectContaining({
