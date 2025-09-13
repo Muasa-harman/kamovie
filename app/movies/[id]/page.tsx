@@ -59,7 +59,7 @@ export default function MovieDetailsPage() {
     if (!id) return;
     setLoading(true);
 
-    getMovieDetails(Number(id))
+    getMovieDetails("movie",Number(id))
       .then((data) => setMovie(data))
       .catch(console.error)
       .finally(() => setLoading(false));
