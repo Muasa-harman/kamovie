@@ -71,7 +71,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID}}
           vercel-project-id: ${{ secrets.PROJECT_ID}}
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod' || '' }}
+          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod --confirm' || 'confirm' }}
 
       - name: Comment PR with Preview URL
         if: github.event_name == 'pull_request'
