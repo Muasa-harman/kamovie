@@ -1,20 +1,14 @@
-import { Filters } from "./types";
+import { FetchOptions, Filters } from "./types";
 
 const BASE_URL = "https://api.themoviedb.org/3";
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_READ_TOKEN!;
 
-type FetchOptions = {
-  signal?: AbortSignal;
-  force?: boolean; 
-};
-
 
 export const cache = new Map<string, { data: any; timestamp: number }>();
 
-const CACHE_TTL = 10 * 60 * 1000; 
+const CACHE_TTL = 10 * 60 * 1000;
 const CLEANUP_INTERVAL = 5 * 60 * 1000; 
 const MAX_CACHE_SIZE = 500;
-
 
 function cleanExpiredCache() {
   const now = Date.now();
@@ -32,7 +26,6 @@ function cleanExpiredCache() {
   }
 }
 
-
 function enforceCacheSize() {
   if (cache.size <= MAX_CACHE_SIZE) return;
 
@@ -48,12 +41,10 @@ function enforceCacheSize() {
   console.log(`[TMDB Cache] Removed ${removed} oldest entries to enforce max size`);
 }
 
-
 setInterval(() => {
   cleanExpiredCache();
   enforceCacheSize();
 }, CLEANUP_INTERVAL);
-
 
 async function fetchDataFromTMDB(
   endpoint: string,
@@ -136,13 +127,12 @@ export async function getTrendingMovies() {
   return data.results;
 }
 
-export async function getPopularMovies() {
-  const data = await fetchDataFromTMDB("/movie/popular");
+export async function getRecommendedTVShows() {
+  const data = await fetchDataFromTMDB("/discover/tv");
   return data.results;
 }
-
-export async function getTopRatedMovies() {
-  const data = await fetchDataFromTMDB("/movie/top_rated");
+export async function getRecommendedMovies() {
+  const data = await fetchDataFromTMDB("/discover/movie");
   return data.results;
 }
 
@@ -207,5 +197,3 @@ export async function getKeywords(query: string) {
   const data = await fetchDataFromTMDB("/search/keyword", { query });
   return data.results;
 }
-
-

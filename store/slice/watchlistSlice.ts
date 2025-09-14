@@ -1,18 +1,6 @@
+import { MediaType, WatchlistState } from "@/lib/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-export interface MovieType {
-  id: number;
-  title: string;
-  [key: string]: any; 
-}
-
-interface WatchlistState {
-  movies: Record<number, MovieType>;
-  lastAction: {
-    type: "add" | "remove" | null;
-    movie: MovieType | null;
-  };
-}
 
 const initialState: WatchlistState = {
   movies: {},
@@ -23,7 +11,7 @@ const watchlistSlice = createSlice({
   name: "watchlist",
   initialState,
   reducers: {
-    addMovie: (state, action: PayloadAction<MovieType>) => {
+    addMovie: (state, action: PayloadAction<MediaType>) => {
       state.movies[action.payload.id] = action.payload;
       state.lastAction = { type: "add", movie: action.payload };
     },

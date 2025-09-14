@@ -5,12 +5,13 @@ import { useState } from "react";
 import { AppDispatch, RootState } from "@/store/store";
 import {
   addMovie,
-  MovieType,
+  // MediaType,
   removeMovie,
   undoLastAction,
 } from "@/store/slice/watchlistSlice";
+import { MediaType } from "@/lib/types";
 
-export function useWatchlist(movie?: MovieType) {
+export function useWatchlist(item?: MediaType) {
   const dispatch = useDispatch<AppDispatch>();
   const movies = useSelector((state: RootState) => state.watchlist.movies);
   const lastAction = useSelector(
@@ -21,19 +22,19 @@ export function useWatchlist(movie?: MovieType) {
   const [showToast, setShowToast] = useState(false);
   const [toastType, setToastType] = useState<"add" | "remove">("add");
 
-  const isInWatchlist = movie ? !!movies[movie.id] : false;
+  const isInWatchlist = item ? !!movies[item.id] : false;
   const watchlistIds = Object.keys(movies).map(Number);
 
   const toggleWatchlist = () => {
-    if (!movie) return;
+    if (!item) return;
 
     if (isInWatchlist) {
-      dispatch(removeMovie(movie.id));
-      setToastMessage(`"${movie.title}" removed from your watchlist`);
+      dispatch(removeMovie(item.id));
+      setToastMessage(`"${item.title}" removed from your watchlist`);
       setToastType("remove");
     } else {
-      dispatch(addMovie(movie));
-      setToastMessage(`"${movie.title}" added to your watchlist`);
+      dispatch(addMovie(item));
+      setToastMessage(`"${item.title}" added to your watchlist`);
       setToastType("add");
     }
 
@@ -52,9 +53,9 @@ export function useWatchlist(movie?: MovieType) {
 
   return {
     movies,
-    watchlistIds,       
-    isInWatchlist,      
-    toggleWatchlist,    
+    watchlistIds,
+    isInWatchlist,
+    toggleWatchlist,
     removeFromWatchlist,
     toastMessage,
     showToast,

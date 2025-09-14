@@ -1,14 +1,8 @@
 "use client";
 
+import { ToastProps } from "@/lib/types";
 import { motion, AnimatePresence } from "framer-motion";
 import React from "react";
-
-interface ToastProps {
-  message: string;
-  show: boolean;
-  type?: "add" | "remove";
-  onUndo?: () => void;
-}
 
 export default function Toast({ message, show, type = 'add', onUndo }: ToastProps) {
     const bgColor = type === "add" ? "bg-green-600" : "bg-red-600";
