@@ -95,7 +95,7 @@ export default function MovieDetailsPage() {
       {/* Back Button */}
       <Button
         onClick={() => router.back()}
-        className="mb-6 px-4 py-2 rounded-full bg-primary hover:bg-primary-hover transition"
+        className="mb-6 px-4 py-2 rounded-full bg-primary hover:bg-primary-hover transition cursor-pointer" 
       >
         Back
       </Button>

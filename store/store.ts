@@ -1,7 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import storage from "redux-persist/lib/storage"; 
+// import storage from "redux-persist/lib/storage"; 
 import { persistReducer, persistStore } from "redux-persist";
 import watchlistReducer from "./slice/watchlistSlice";
+import storage from "./persistConfig";
 
 const persistConfig = {
   key: "watchlist", 
@@ -16,7 +17,7 @@ export const store = configureStore({
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
-      serializableCheck: false, // needed for redux-persist
+      serializableCheck: false, 
     }),
 });
 
