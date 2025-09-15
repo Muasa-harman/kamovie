@@ -1,11 +1,9 @@
 "use client";
 
 import React from "react";
-import { Cast } from "@/lib/types";
+import { Cast, TopCastProps } from "@/lib/types";
 
-interface TopCastProps {
-  cast: Cast[];
-}
+
 
 export default function TopCast({ cast }: TopCastProps) {
   if (!cast || cast.length === 0) return null;
