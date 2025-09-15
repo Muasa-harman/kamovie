@@ -1,7 +1,12 @@
 import { FetchOptions, Filters } from "./types";
 
-const BASE_URL = "https://api.themoviedb.org/3";
+const BASE_URL_V3 = "https://api.themoviedb.org/3";
+const BASE_URL_V4 = "https://api.themoviedb.org/4/auth";
+
+
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_READ_TOKEN!;
+const V4_ACCESS_TOKEN = process.env.TMDB_V4_ACCESS_TOKEN!;
+const V3_READ_TOKEN = process.env.TMDB_READ_ACCESS_TOKEN!;
 
 
 export const cache = new Map<string, { data: any; timestamp: number }>();
@@ -51,7 +56,7 @@ async function fetchDataFromTMDB(
   params?: Record<string, string | number | undefined>,
   options: FetchOptions = {}
 ) {
-  const url = new URL(`${BASE_URL}${endpoint}`);
+  const url = new URL(`${BASE_URL_V3}${endpoint}`);
 
   if (params) {
     Object.entries(params).forEach(([key, value]) => {
@@ -93,6 +98,66 @@ async function fetchDataFromTMDB(
 
   return data;
 }
+
+export async function createRequestToken(redirectTo: string) {
+  const res = await fetch(`${BASE_URL_V4}/request_token`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${V3_READ_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ redirect_to: redirectTo }),
+  });
+  return res.json();
+}
+
+export async function exchangeAccessToken(request_token: string) {
+  const res = await fetch(`${BASE_URL_V4}/access_token`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${V4_ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ request_token }),
+  });
+  return res.json();
+}
+
+export async function revokeAccessToken(access_token: string) {
+  const res = await fetch(`${BASE_URL_V4}/access_token`, {
+    method: "DELETE",
+    headers: {
+      Authorization: `Bearer ${V4_ACCESS_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ access_token }),
+  });
+  return res.json();
+}
+
+export async function getUserInfo(access_token: string) {
+  const res = await fetch("https://api.themoviedb.org/3/account", {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  });
+
+  if (!res.ok) {
+    throw new Error(`Failed to fetch user info: ${res.status}`);
+  }
+
+  const user = await res.json();
+
+  return {
+    id: user.id,
+    username: user.username,
+    name: user.name || user.username,
+    avatar: user.avatar?.tmdb?.avatar_path
+      ? `https://image.tmdb.org/t/p/w200${user.avatar.tmdb.avatar_path}`
+      : undefined,
+  };
+}
+
 
 function buildDiscoverParams(filters: Filters, isSearch = false) {
   const params: Record<string, string | number> = {
