@@ -75,8 +75,8 @@ jobs:
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          vercel-org-id: ${{ secrets.ORG_ID}}
-          vercel-project-id: ${{ secrets.PROJECT_ID}}
+          vercel-org-id: ${{ secrets.ORG_ID }}
+          vercel-project-id: ${{ secrets.PROJECT_ID }}
           vercel-args: >-
             ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) && '--prod --confirm' ||
                 (github.event_name == 'pull_request_review' && github.event.review.state == 'approved') && '--prod --confirm' ||
@@ -88,10 +88,11 @@ jobs:
         with:
           header: preview-url
           message: |
-            Vercel Preview is ready!
-            ${{ steps.vercel.outputs.preview-url }}
+             Vercel Preview is ready!
+             [View Deployment](${{ steps.vercel.outputs.preview-url }})
 
       - name: Update GitHub Check with Deployment URL
+        if: always() # make sure it runs even if previous step skipped
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -109,7 +110,7 @@ jobs:
               output: {
                 title: "Deployment Complete",
                 summary: deploymentUrl 
-                  ? ` Deployed successfully: [View Deployment](${deploymentUrl})` 
-                  : " Deployment failed."
+                  ? `Deployed successfully: [View Deployment](${deploymentUrl})` 
+                  : "Deployment failed."
               }
             });
