@@ -10,8 +10,8 @@ on:
 
 permissions:
   contents: read
-  issues: write
   pull-requests: write
+  issues: write
   checks: write
 
 jobs:
@@ -90,7 +90,7 @@ jobs:
                '--confirm' }}
 
       - name: Comment PR with Preview URL
-        if: github.event_name == 'pull_request'
+        if: github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: preview-url
