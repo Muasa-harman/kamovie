@@ -48,9 +48,11 @@ const Navbar = () => {
     <nav className="sticky top-0 z-50 bg-white/95 text-white-foreground backdrop-blur-md shadow-md">
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
+        <Link href={"/"}>
         <div className="text-xl font-bold text-primary hover:text-primary-hover transition-colors duration-300 cursor-pointer">
           <span className="text-black-700">K</span>amovy
         </div>
+        </Link>
 
         <div className="flex items-center gap-4">
           {/* Watchlist */}

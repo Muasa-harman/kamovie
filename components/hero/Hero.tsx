@@ -194,23 +194,26 @@ export default function Hero() {
   };
 
   return (
+
+
     <section
       className="relative w-full 
-  min-h-[70vh] md:min-h-screen 
+  min-h-[50vh] md:min-h-screen 
   bg-gradient-to-br from-black/90 to-indigo-950/80 bg-cover bg-center 
-  flex flex-col items-center px-4 md:px-10 py-12 md:py-20"
+  flex flex-col items-center px-4 md:px-10 py-6 md:py-20"
       style={{
         backgroundImage: `linear-gradient(135deg, rgba(15, 15, 26, 0.9), rgba(30, 30, 60, 0.8)), url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1850&q=80')`,
       }}
     >
-      <div className="max-w-6xl mx-auto w-full">
+      <div className="max-w-6xl mx-auto w-full flex flex-col items-center justify-center">
+       {/* className="max-w-6xl mx-auto w-full" */}
         <HeroHeadline />
-        <p className="text-gray-300 text-base md:text-xl mb-6 md:mb-10 leading-relaxed text-center max-w-3xl mx-auto">
+        <p className="text-gray-300 text-base md:text-xl mb-4 md:mb-10 leading-relaxed text-center max-w-3xl mx-auto">
           Discover hidden gems you didn’t know you’d love. Your ultimate guide
           to movies, tailored for you.
         </p>
-        <div className="relative bg-white/10 border border-white/20 rounded-2xl p-2 backdrop-blur-md mb-8 max-w-2xl mx-auto">
-          <div className="flex items-center px-4 py-2">
+        <div className="relative bg-white/10 border border-white/20 rounded-2xl p-2 backdrop-blur-md mb-4 md:mb-8 max-w-2xl mx-auto">
+          <div className="flex items-center px-4 py-2 mb-2 sm:mb-0">
             <Search className="text-gray-400 mr-2" size={20} />
             <input
               type="text"
@@ -222,7 +225,7 @@ export default function Hero() {
               onFocus={() => suggestions.length > 0 && setShowSuggestions(true)}
             />
             <button
-              className="bg-primary hover:bg-primary/90 transition-all px-6 py-3 rounded-xl font-semibold text-primary-foreground flex items-center ml-2"
+              className="bg-primary hover:bg-primary/90 transition-all px-4 py-2 sm:px-6 sm:py-3 rounded-xl font-semibold text-primary-foreground flex items-center sm:w-auto sm:ml-2"
               onClick={() => handleSearch()}
               disabled={loading}
             >
@@ -250,7 +253,7 @@ export default function Hero() {
           )}
           <div className="border-t border-white/20 mt-2 pt-2 px-4">
             <button
-              className="flex items-center text-gray-300 hover:text-white transition-colors text-sm"
+              className="flex items-center sm:justify-start text-gray-300 hover:text-white transition-colors text-sm"
               onClick={() => setShowFilters(!showFilters)}
             >
               <Filter size={16} className="mr-1" />
@@ -266,7 +269,7 @@ export default function Hero() {
           {showFilters && (
             <div
               ref={filtersRef}
-              className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-4 p-4 bg-black/30 rounded-lg border border-white/10"
+              className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-4 p-4 bg-black/30 rounded-lg border border-white/10"
             >
               <div>
                 <label className="block text-sm font-medium text-gray-300 mb-1">
@@ -351,7 +354,7 @@ export default function Hero() {
                   <option value="revenue.desc">Box Office</option>
                 </select>
               </div>
-              <div className="md:col-span-3 lg:col-span-5 flex justify-end mt-2">
+              <div className="sm:col-span-2 md:col-span-3 lg:col-span-5 flex justify-end mt-2">
                 <button
                   className="text-sm text-gray-400 hover:text-white transition-colors flex items-center"
                   onClick={clearFilters}
@@ -362,8 +365,8 @@ export default function Hero() {
             </div>
           )}
         </div>
-        <div className="flex flex-wrap justify-center gap-3 mb-12 max-w-2xl mx-auto">
-          <span className="text-gray-300 text-sm">Trending Genres:</span>
+        <div className="flex flex-wrap justify-center gap-3  md:mb-12 mb-12 max-w-2xl mx-auto">
+          <span className="text-gray-300 text-sm sm:w-auto sm:mb-0">Trending Genres:</span>
           {trendingGenres.map((chip) => {
             const genre = genres.find((g) => g.name === chip);
             return (

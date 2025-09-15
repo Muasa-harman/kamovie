@@ -50,26 +50,3 @@ export default function RootLayout({
 }
 
 
-// export default function RootLayout({
-//   children,
-// }: Readonly<{
-//   children: React.ReactNode;
-// }>) {
-//   return (
-//     <html lang="en">
-//       <body
-//         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-//       >
-//         <ReduxProvider>
-//           <PersistProvider>
-//         <ReactQueryProvider>
-//         {children}
-//           </PersistProvider>
-//         </ReactQueryProvider>
-//         <Footer/>
-//           </PersistProvider>
-//         </ReduxProvider>
-//       </body>
-//     </html>
-//   );
-// }
