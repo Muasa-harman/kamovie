@@ -145,3 +145,24 @@ export type Genre = {
   name: string;
 };
 
+export  interface Avatar {
+  tmdb?: { avatar_path: string | null };
+  gravatar?: { hash: string | null };
+}
+
+export interface User {
+  id: number | string;
+  username: string;
+  name?: string;
+  avatar?: string | null;
+}
+
+export interface AuthState {
+  accessToken: string | null;
+  user: User | null;
+}
+
+// export type AuthState = {
+//   user: { name: string; avatar?: string } | null;
+// };
+

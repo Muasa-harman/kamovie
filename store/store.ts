@@ -1,18 +1,25 @@
 import { configureStore } from "@reduxjs/toolkit";
-// import storage from "redux-persist/lib/storage"; 
 import { persistReducer, persistStore } from "redux-persist";
 import watchlistReducer from "./slice/watchlistSlice";
 import storage from "./persistConfig";
+import authReducer from "./slice/authSlice"
 
-const persistConfig = {
+const watchlistPersistConfig = {
   key: "watchlist", 
   storage,
 };
 
-const persistedWatchlistReducer = persistReducer(persistConfig, watchlistReducer);
+const authPersistConfig = {
+  key: "auth",
+  storage,
+};
+
+const persistedWatchlistReducer = persistReducer(watchlistPersistConfig, watchlistReducer);
+const persistedAuthReducer = persistReducer(authPersistConfig, authReducer);
 
 export const store = configureStore({
   reducer: {
+    auth: persistedAuthReducer,
     watchlist: persistedWatchlistReducer,
   },
   middleware: (getDefaultMiddleware) =>

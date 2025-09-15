@@ -11,31 +11,47 @@ const headlines = [
 ];
 
 export default function HeroHeadline() {
-  const [index, setIndex] = useState(0);
+  const [index, setIndex] = useState(0);        
+  const [displayText, setDisplayText] = useState(""); 
+  const [charIndex, setCharIndex] = useState(0); 
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setIndex((prev) => (prev + 1) % headlines.length);
-    }, 4000);
+    if (charIndex < headlines[index].length) {
+      const timeout = setTimeout(() => {
+        setDisplayText((prev) => prev + headlines[index][charIndex]);
+        setCharIndex((prev) => prev + 1);
+      }, 80);
+      return () => clearTimeout(timeout);
+    } else {
+      const timeout = setTimeout(() => {
+        setIndex((prev) => (prev + 1) % headlines.length);
+        setDisplayText("");
+        setCharIndex(0);
+      }, 2000);
+      return () => clearTimeout(timeout);
+    }
+  }, [charIndex, index]);
 
-    return () => clearInterval(interval);
-  }, []);
-
-  const headline = headlines[index];
+  const highlight = (text: string) => {
+    const keywords = ["movie", "love", "discover"];
+    return text.split(/(\s+)/).map((word, idx) => {
+      if (keywords.some((kw) => word.toLowerCase().includes(kw))) {
+        return (
+          <span key={idx} className="text-primary">
+            {word}
+          </span>
+        );
+      }
+      return <span key={idx}>{word}</span>;
+    });
+  };
 
   return (
-    <h1 className="text-4xl md:text-6xl font-bold leading-tight mb-6 text-center transition-all duration-700 ease-in-out">
-      {headline.split(" ").map((word, idx) =>
-        ["movie", "love", "discover"].some((kw) =>
-          word.toLowerCase().includes(kw)
-        ) ? (
-          <span key={idx} className="text-primary">
-            {word}{" "}
-          </span>
-        ) : (
-          <span key={idx}>{word} </span>
-        )
-      )}
+    <h1 className="text-2xl md:text-4xl font-extrabold leading-snug mb-6 text-center transition-all duration-300 ease-in-out
+             bg-gradient-to-r from-green-400 via-lime-400 to-yellow-400 bg-clip-text text-transparent">
+      {highlight(displayText)}
+      <span className="inline-block w-1 h-8 bg-primary ml-1 animate-pulse" /> 
     </h1>
   );
 }
+
