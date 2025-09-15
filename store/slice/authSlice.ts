@@ -19,10 +19,6 @@ const authSlice = createSlice({
       state.user = action.payload.user;
     },
     clearAuth: () => initialState,
-    // clearAuth: (state) => {
-    //   state.accessToken = null;
-    //   state.user = null;
-    // },
   },
 });
 
