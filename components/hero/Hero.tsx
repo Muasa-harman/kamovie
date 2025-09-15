@@ -205,7 +205,8 @@ export default function Hero() {
         backgroundImage: `linear-gradient(135deg, rgba(15, 15, 26, 0.9), rgba(30, 30, 60, 0.8)), url('https://images.unsplash.com/photo-1536440136628-849c177e76a1?auto=format&fit=crop&w=1850&q=80')`,
       }}
     >
-      <div className="max-w-6xl mx-auto w-full">
+      <div className="max-w-6xl mx-auto w-full flex flex-col items-center justify-center h-full">
+       {/* className="max-w-6xl mx-auto w-full" */}
         <HeroHeadline />
         <p className="text-gray-300 text-base md:text-xl mb-4 md:mb-10 leading-relaxed text-center max-w-3xl mx-auto">
           Discover hidden gems you didn’t know you’d love. Your ultimate guide
