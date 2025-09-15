@@ -162,7 +162,6 @@ export interface AuthState {
   user: User | null;
 }
 
-// export type AuthState = {
-//   user: { name: string; avatar?: string } | null;
-// };
-
+export interface TopCastProps {
+  cast: Cast[];
+}
