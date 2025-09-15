@@ -40,7 +40,7 @@ export  interface MovieDetailsType {
 
 export  interface MovieCardProps {
   title: string;
-  rating: number;
+  rating?: number;
   poster: string;
   id: number;
   type?:"movie" | "tv";

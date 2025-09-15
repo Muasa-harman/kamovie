@@ -10,7 +10,6 @@ export default function Home() {
     <div className="">
       <Hero/>
       <Movies/>
-      <Footer/>
     </div>
   );
 }
