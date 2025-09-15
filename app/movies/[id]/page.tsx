@@ -71,7 +71,7 @@ export default function MovieDetailsPage() {
   );
 
   return (
-    <div className="max-w-6xl mx-auto p-6 md:p-10 bg-black/90 text-white">
+    <div className="min-h-screen w-full bg-black/90 text-white p-4 md:p-10 md:max-w-6xl md:mx-auto">
       <Button
         onClick={() => router.back()}
         className="mb-6 px-4 py-2 rounded-full bg-primary hover:bg-primary-hover transition cursor-pointer"
