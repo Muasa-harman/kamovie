@@ -8,6 +8,12 @@ on:
   pull_request_review:
     types: [submitted]
 
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write   
+  checks: write   
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -56,14 +62,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.event_name == 'pull_request'
     steps:
       - uses: actions/checkout@v4
       - uses: actions/download-artifact@v4
         with:
           name: build-output
           path: .
-      - name: Deploy to Vercel (Preview or Prod)
+
+      - name: Deploy to Vercel
         id: vercel
         uses: amondnet/vercel-action@v25
         with:
@@ -71,7 +77,10 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           vercel-org-id: ${{ secrets.ORG_ID}}
           vercel-project-id: ${{ secrets.PROJECT_ID}}
-          vercel-args: ${{ github.ref == 'refs/heads/main' && '--prod --confirm' || 'confirm' }}
+          vercel-args: >-
+            ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')) && '--prod --confirm' ||
+                (github.event_name == 'pull_request_review' && github.event.review.state == 'approved') && '--prod --confirm' ||
+                '--confirm' }}
 
       - name: Comment PR with Preview URL
         if: github.event_name == 'pull_request'
@@ -79,13 +88,28 @@ jobs:
         with:
           header: preview-url
           message: |
-             Vercel Preview is ready!
-             ${{ steps.vercel.outputs.preview-url }}
+            Vercel Preview is ready!
+            ${{ steps.vercel.outputs.preview-url }}
 
-  deploy-on-approval:
-    if: github.event_name == 'pull_request_review' && github.event.review.state == 'approved'
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - run: npm install -g vercel
-      - run: vercel --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Update GitHub Check with Deployment URL
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const deploymentUrl = "${{ steps.vercel.outputs.preview-url }}";
+            const conclusion = deploymentUrl ? "success" : "failure";
+
+            await github.rest.checks.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              name: "Deployed to Vercel",
+              head_sha: context.sha,
+              status: "completed",
+              conclusion,
+              output: {
+                title: "Deployment Complete",
+                summary: deploymentUrl 
+                  ? ` Deployed successfully: [View Deployment](${deploymentUrl})` 
+                  : " Deployment failed."
+              }
+            });

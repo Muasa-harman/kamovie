@@ -7,16 +7,17 @@ import { Button } from "@/components/ui/button";
 import Spinner from "@/components/Spinner";
 import { useWatchlist } from "@/hooks/useWatchlist";
 import Toast from "@/components/Toast";
-import { Crew, Genre, MovieDetailsType, Video } from "@/lib/types";
+import { Cast, Crew, Genre, TVDetailsType, Video } from "@/lib/types";
 import TopCast from "@/components/TopCast";
 
 
-export default function MovieDetailsPage() {
+
+export default function TVDetailsPage() {
   const params = useParams();
   const router = useRouter();
   const { id } = params;
 
-  const [movie, setMovie] = useState<MovieDetailsType | null>(null);
+  const [tv, setTV] = useState<TVDetailsType | null>(null);
   const [loading, setLoading] = useState(true);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
 
@@ -28,21 +29,23 @@ export default function MovieDetailsPage() {
     toastType,
     handleUndo,
   } = useWatchlist(
-    movie
+    tv
       ? {
-          id: movie.id,
-          title: movie.title,
-          type: "movie",
+          id: tv.id,
+          title: tv.name,
+          type:"tv",
+          poster_path:tv.poster_path,
+          vote_average:tv.vote_average,
+          release_date:tv.first_air_date,
         }
       : undefined
   );
-
   useEffect(() => {
     if (!id) return;
     setLoading(true);
 
-    getMovieDetails("movie", Number(id))
-      .then((data) => setMovie(data))
+    getMovieDetails("tv", Number(id))
+      .then((data) => setTV(data))
       .catch(console.error)
       .finally(() => setLoading(false));
   }, [id]);
@@ -55,18 +58,18 @@ export default function MovieDetailsPage() {
     );
   }
 
-  if (!movie) {
-    return <div className="text-white text-center mt-10">Movie not found</div>;
+  if (!tv) {
+    return (
+      <div className="text-white text-center mt-10">TV Show not found</div>
+    );
   }
 
-  const directors =
-    movie.credits?.crew.filter((c: Crew) => c.job === "Director") || [];
+  const creators = tv.created_by || [];
   const writers =
-    movie.credits?.crew.filter((c: Crew) =>
+    tv.credits?.crew.filter((c: Crew) =>
       ["Writer", "Screenplay", "Story"].includes(c.job)
     ) || [];
-
-  const trailer = movie.videos?.results.find(
+  const trailer = tv.videos?.results.find(
     (v: Video) => v.type === "Trailer" && v.site === "YouTube"
   );
 
@@ -81,38 +84,38 @@ export default function MovieDetailsPage() {
 
       <div className="flex flex-col md:flex-row gap-6">
         <img
-          src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-          alt={movie.title}
+          src={`https://image.tmdb.org/t/p/w500${tv.poster_path}`}
+          alt={tv.name}
           className="w-full md:w-1/3 rounded-xl object-cover"
         />
         <div className="flex-1">
-          <h1 className="text-3xl md:text-5xl font-bold mb-4">{movie.title}</h1>
+          <h1 className="text-3xl md:text-5xl font-bold mb-4">{tv.name}</h1>
 
           <p className="text-gray-300 mb-2">
-            <strong>Release Date:</strong> {movie.release_date}
+            <strong>First Air Date:</strong> {tv.first_air_date}
           </p>
           <p className="text-gray-300 mb-2">
-            <strong>Rating:</strong> {movie.vote_average}/10
+            <strong>Rating:</strong> {tv.vote_average}/10
           </p>
           <p className="text-gray-300 mb-2">
             <strong>Genres:</strong>{" "}
-            {movie.genres.map((g: Genre) => g.name).join(", ")}
+            {tv.genres.map((g: Genre) => g.name).join(", ")}
           </p>
 
-          {directors.length > 0 && (
+          {creators.length > 0 && (
             <p className="text-gray-300 mb-1">
-              <strong>Director:</strong>{" "}
-              {directors.map((d: Crew) => d.name).join(", ")}
+              <strong>Creators:</strong>{" "}
+              {creators.map((c) => c.name).join(", ")}
             </p>
           )}
           {writers.length > 0 && (
             <p className="text-gray-300 mb-4">
-              <strong>Writer:</strong>{" "}
+              <strong>Writer(s):</strong>{" "}
               {writers.map((w: Crew) => w.name).join(", ")}
             </p>
           )}
 
-          <p className="text-gray-200 mb-6">{movie.overview}</p>
+          <p className="text-gray-200 mb-6">{tv.overview}</p>
           <div className="flex flex-col md:flex-row gap-4 mb-6 justify-between">
             {trailer && (
               <Button
@@ -133,8 +136,8 @@ export default function MovieDetailsPage() {
               {isInWatchlist ? "✔ In Watchlist" : "+ Add to Watchlist"}
             </Button>
           </div>
-          {movie.credits && movie.credits.cast.length > 0 && (
-            <TopCast cast={movie.credits.cast}/>
+          {tv.credits && tv.credits.cast.length > 0 && (
+            <TopCast cast={tv.credits.cast}/>
           )}
         </div>
       </div>
@@ -145,7 +148,7 @@ export default function MovieDetailsPage() {
               width="100%"
               height="100%"
               src={`https://www.youtube.com/embed/${trailer.key}?autoplay=1`}
-              title="Movie Trailer"
+              title="TV Show Trailer"
               frameBorder="0"
               allow="autoplay; encrypted-media"
               allowFullScreen

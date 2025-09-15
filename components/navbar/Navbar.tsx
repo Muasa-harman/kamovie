@@ -4,11 +4,11 @@ import React, { useEffect, useState } from "react";
 import { Button } from "../ui/button";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { useWatchlist } from "@/hooks/useWatchlist"; 
+import { useWatchlist } from "@/hooks/useWatchlist";
 
 const Navbar = () => {
-  const { movies } = useWatchlist(); 
-  const watchlistIds = Object.keys(movies); 
+  const { movies } = useWatchlist();
+  const watchlistIds = Object.keys(movies);
   const [prevCount, setPrevCount] = useState(watchlistIds.length);
 
   useEffect(() => {
@@ -20,7 +20,7 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
         {/* Logo */}
         <div className="text-xl font-bold text-primary hover:text-primary-hover transition-colors duration-300 cursor-pointer">
-          Kamovie
+          <span className="text-black-700">K</span>amovy
         </div>
         <div className="justify-between">
           <Button className="px-4 py-2 bg-primary hover:bg-primary-hover text-primary-foreground rounded-lg transition-colors duration-300">

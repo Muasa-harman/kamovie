@@ -17,7 +17,3 @@ jest.mock('next/navigation', () => ({
   usePathname: () => '',
 }));
 
-// jest.mock('next/image', () => ({
-//   __esModule: true,
-//   default: (props: any) => <img {...props} />,
-// }));
