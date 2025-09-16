@@ -17,22 +17,22 @@ export default function AuthSuccess() {
 
   useEffect(() => {
     const sessionId = searchParams.get("session_id");
-    
 
     if (!sessionId) {
-      console.log("No session_id found, redirecting home.");
+      console.warn("No session_id found, redirecting home.");
       router.push("/");
       return;
     }
 
-    (async () => {
+    const fetchUser = async () => {
       try {
         const res = await fetch(
           `https://api.themoviedb.org/3/account?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY_V3}&session_id=${sessionId}`
         );
-        console.log("response data", res)
 
-        if (!res.ok) throw new Error(`TMDB API error: ${res.status}`);
+        if (!res.ok) {
+          throw new Error(`TMDB API error: ${res.status}`);
+        }
 
         const data = await res.json();
 
@@ -47,31 +47,30 @@ export default function AuthSuccess() {
 
         console.log("Fetched TMDB user:", user);
 
-        dispatch(setAuth({ sessionId: sessionId || undefined, user }));
+        dispatch(setAuth({ sessionId, user }));
 
-        console.log("Dispatched auth state with sessionId:", sessionId);
-        setTimeout(() => {
-  router.push("/");
-}, 2000);
-      } catch (err) {
-        console.error("Failed to fetch TMDB user:", err);
+        console.log("Auth state updated, redirecting home...");
+        router.push("/"); 
+      } catch (error) {
+        console.error("Failed to fetch TMDB user:", error);
         router.push("/");
       } finally {
         setLoading(false);
       }
-    })();
+    };
+
+    fetchUser();
   }, [dispatch, router, searchParams]);
 
   useEffect(() => {
-    console.log("Redux auth state updated:", authState);
+    console.log("Redux auth state:", authState);
   }, [authState]);
 
   return (
     <div className="flex justify-center items-center h-screen text-lg">
-      {loading
-        ? "Please wait while we fetch your account details..."
-        : "Redirecting..."}
+      {loading ? "Logging you in..." : "Redirecting..."}
     </div>
   );
 }
+
 
