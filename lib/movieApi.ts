@@ -108,22 +108,10 @@ export async function createRequestToken(redirectTo: string) {
   console.log("TMDB v3 request_token response:", data);
 
   if (data.success) {
-    // Append redirect_to manually
     data.redirectUrl = `https://www.themoviedb.org/authenticate/${data.request_token}?redirect_to=${redirectTo}`;
   }
 
   return data;
-  // const res = await fetch(`${BASE_URL_V4}/request_token`, {
-  //   method: "POST",
-  //   headers: {
-  //     Authorization: `Bearer ${V4_ACCESS_TOKEN}`,
-  //     "Content-Type": "application/json",
-  //   },
-  //   body: JSON.stringify({ redirect_to: redirectTo }),
-  // });
-  // const data = await res.json();
-  // console.log("TMDB request_token response:", data);
-  // return data;
 }
 
 export async function exchangeAccessToken(request_token: string) {
