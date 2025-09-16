@@ -1,8 +1,8 @@
 import { AuthState, User } from "@/lib/types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-
 const initialState: AuthState = {
+  sessionId: null,
   accessToken: null,
   user: null,
 };
@@ -13,9 +13,18 @@ const authSlice = createSlice({
   reducers: {
     setAuth: (
       state,
-      action: PayloadAction<{ accessToken: string; user: User }>
+      action: PayloadAction<{
+        sessionId?: string;
+        accessToken?: string;
+        user: User;
+      }>
     ) => {
-      state.accessToken = action.payload.accessToken;
+      if (action.payload.sessionId) {
+        state.sessionId = action.payload.sessionId;
+      }
+      if (action.payload.accessToken) {
+        state.accessToken = action.payload.accessToken;
+      }
       state.user = action.payload.user;
     },
     clearAuth: () => initialState,
@@ -24,3 +33,5 @@ const authSlice = createSlice({
 
 export const { setAuth, clearAuth } = authSlice.actions;
 export default authSlice.reducer;
+
+

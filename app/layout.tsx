@@ -3,7 +3,6 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import ReactQueryProvider from "@/providers/ReactQueryProvider";
 import ReduxProvider from "@/providers/ReduxProvider";
-import PersistProvider from "@/providers/PersistProvider";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/navbar/Navbar";
 import Header from "@/components/header/Header";
@@ -26,27 +25,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+}: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+      >
         <ReduxProvider>
-          <PersistProvider>
-            <ReactQueryProvider>
-              <MaxWidthWrapper className="">
-              <Header/>
-              <Navbar/>
+          <ReactQueryProvider>
+            <MaxWidthWrapper>
+              <Header />
+              <Navbar />
               {children}
               <Footer />
-              </MaxWidthWrapper>
-            </ReactQueryProvider>
-          </PersistProvider>
+            </MaxWidthWrapper>
+          </ReactQueryProvider>
         </ReduxProvider>
       </body>
     </html>
   );
 }
-
-

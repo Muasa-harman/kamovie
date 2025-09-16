@@ -12,19 +12,18 @@ export default function AuthCallback() {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const accessToken = searchParams.get("access_token");
-    if (!accessToken) {
-      console.error("Missing access_token in callback URL");
+    const sessionId = searchParams.get("session_id");
+    if (!sessionId) {
+      console.error("Missing session_id in callback URL");
+      router.push("/auth/error");
       return;
     }
 
     const fetchUser = async () => {
       try {
-        const res = await fetch("https://api.themoviedb.org/3/account", {
-          headers: {
-            Authorization: `Bearer ${accessToken}`,
-          },
-        });
+        const res = await fetch(
+          `https://api.themoviedb.org/3/account?api_key=${process.env.NEXT_PUBLIC_TMDB_API_KEY_V3}&session_id=${sessionId}`
+        );
 
         if (!res.ok) {
           throw new Error(`TMDb API error: ${res.status}`);
@@ -34,7 +33,7 @@ export default function AuthCallback() {
 
         dispatch(
           setAuth({
-            accessToken,
+            sessionId,
             user: {
               id: user.id,
               username: user.username,
@@ -46,9 +45,10 @@ export default function AuthCallback() {
           })
         );
 
-        router.push("/"); // redirect to homepage
+        router.push("/");
       } catch (error) {
         console.error("Failed to fetch TMDb user:", error);
+        router.push("/auth/error");
       }
     };
 

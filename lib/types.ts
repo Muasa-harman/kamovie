@@ -158,6 +158,7 @@ export interface User {
 }
 
 export interface AuthState {
+  sessionId?: string | null;
   accessToken: string | null;
   user: User | null;
 }
