@@ -1,18 +1,16 @@
 import { FetchOptions, Filters } from "./types";
 
 const BASE_URL_V3 = "https://api.themoviedb.org/3";
-const BASE_URL_V4 = "https://api.themoviedb.org/4/auth";
-
+const BASE_URL_V4 = "https://api.themoviedb.org/4/auth/request_token";
 
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_READ_TOKEN!;
 const V4_ACCESS_TOKEN = process.env.TMDB_V4_ACCESS_TOKEN!;
 const V3_READ_TOKEN = process.env.TMDB_READ_ACCESS_TOKEN!;
 
-
 export const cache = new Map<string, { data: any; timestamp: number }>();
 
 const CACHE_TTL = 10 * 60 * 1000;
-const CLEANUP_INTERVAL = 5 * 60 * 1000; 
+const CLEANUP_INTERVAL = 5 * 60 * 1000;
 const MAX_CACHE_SIZE = 500;
 
 function cleanExpiredCache() {
@@ -43,7 +41,9 @@ function enforceCacheSize() {
     if (removed >= excess) break;
   }
 
-  console.log(`[TMDB Cache] Removed ${removed} oldest entries to enforce max size`);
+  console.log(
+    `[TMDB Cache] Removed ${removed} oldest entries to enforce max size`
+  );
 }
 
 setInterval(() => {
@@ -100,15 +100,30 @@ async function fetchDataFromTMDB(
 }
 
 export async function createRequestToken(redirectTo: string) {
-  const res = await fetch(`${BASE_URL_V4}/request_token`, {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${V3_READ_TOKEN}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ redirect_to: redirectTo }),
-  });
-  return res.json();
+  const res = await fetch(
+    `https://api.themoviedb.org/3/authentication/token/new?api_key=${process.env.TMDB_API_KEY_V3}`
+  );
+
+  const data = await res.json();
+  console.log("TMDB v3 request_token response:", data);
+
+  if (data.success) {
+    // Append redirect_to manually
+    data.redirectUrl = `https://www.themoviedb.org/authenticate/${data.request_token}?redirect_to=${redirectTo}`;
+  }
+
+  return data;
+  // const res = await fetch(`${BASE_URL_V4}/request_token`, {
+  //   method: "POST",
+  //   headers: {
+  //     Authorization: `Bearer ${V4_ACCESS_TOKEN}`,
+  //     "Content-Type": "application/json",
+  //   },
+  //   body: JSON.stringify({ redirect_to: redirectTo }),
+  // });
+  // const data = await res.json();
+  // console.log("TMDB request_token response:", data);
+  // return data;
 }
 
 export async function exchangeAccessToken(request_token: string) {
@@ -157,7 +172,6 @@ export async function getUserInfo(access_token: string) {
       : undefined,
   };
 }
-
 
 function buildDiscoverParams(filters: Filters, isSearch = false) {
   const params: Record<string, string | number> = {
